@@ -1,0 +1,1247 @@
+{
+  "total_queries": 200,
+  "successful_queries": 155,
+  "failed_queries": 45,
+  "queries": [
+    {
+      "id": 1,
+      "category": "Products",
+      "question": "What are all the products in our inventory?",
+      "query": "SELECT inv_id, inv_nm, unit_prc, cat_cd FROM SUPPLY_CHAIN.INV_MAST ORDER BY inv_nm",
+      "row_count": 652,
+      "status": "success"
+    },
+    {
+      "id": 2,
+      "category": "Products",
+      "question": "What is the total number of products in our inventory?",
+      "query": "SELECT COUNT(*) as total_products FROM SUPPLY_CHAIN.INV_MAST",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 3,
+      "category": "Products",
+      "question": "What is the average price of all products?",
+      "query": "SELECT AVG(unit_prc) as avg_price FROM SUPPLY_CHAIN.INV_MAST WHERE unit_prc IS NOT NULL",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 4,
+      "category": "Products",
+      "question": "What is the highest priced product?",
+      "query": "SELECT inv_id, inv_nm, unit_prc FROM SUPPLY_CHAIN.INV_MAST WHERE unit_prc = (SELECT MAX(unit_prc) FROM SUPPLY_CHAIN.INV_MAST) LIMIT 1",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 5,
+      "category": "Products",
+      "question": "What is the lowest priced product?",
+      "query": "SELECT inv_id, inv_nm, unit_prc FROM SUPPLY_CHAIN.INV_MAST WHERE unit_prc = (SELECT MIN(unit_prc) FROM SUPPLY_CHAIN.INV_MAST WHERE unit_prc > 0) LIMIT 1",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 6,
+      "category": "Products",
+      "question": "What products cost more than $50?",
+      "query": "SELECT inv_id, inv_nm, unit_prc FROM SUPPLY_CHAIN.INV_MAST WHERE unit_prc > 50 ORDER BY unit_prc DESC",
+      "row_count": 8,
+      "status": "success"
+    },
+    {
+      "id": 7,
+      "category": "Products",
+      "question": "What products cost less than $10?",
+      "query": "SELECT inv_id, inv_nm, unit_prc FROM SUPPLY_CHAIN.INV_MAST WHERE unit_prc < 10 AND unit_prc > 0 ORDER BY unit_prc",
+      "row_count": 14,
+      "status": "success"
+    },
+    {
+      "id": 8,
+      "category": "Products",
+      "question": "What is the price range of our products?",
+      "query": "SELECT MIN(unit_prc) as min_price, MAX(unit_prc) as max_price, AVG(unit_prc) as avg_price FROM SUPPLY_CHAIN.INV_MAST WHERE unit_prc > 0",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 9,
+      "category": "Products",
+      "question": "How many products are in each price range?",
+      "query": "SELECT CASE WHEN unit_prc < 10 THEN 'Under $10' WHEN unit_prc < 25 THEN '$10-$25' WHEN unit_prc < 50 THEN '$25-$50' WHEN unit_prc < 100 THEN '$50-$100' ELSE 'Over $100' END as price_range, COUNT(*) as product_count FROM SUPPLY_CHAIN.INV_MAST WHERE unit_prc > 0 GROUP BY price_range ORDER BY MIN(unit_prc)",
+      "row_count": 4,
+      "status": "success"
+    },
+    {
+      "id": 10,
+      "category": "Products",
+      "question": "What are the top 10 most expensive products?",
+      "query": "SELECT inv_id, inv_nm, unit_prc FROM SUPPLY_CHAIN.INV_MAST WHERE unit_prc > 0 ORDER BY unit_prc DESC LIMIT 10",
+      "row_count": 10,
+      "status": "success"
+    },
+    {
+      "id": 11,
+      "category": "Products",
+      "question": "What are all the product categories?",
+      "query": "SELECT DISTINCT cat_cd, cat_nm FROM SUPPLY_CHAIN.CAT_REF ORDER BY cat_nm",
+      "row_count": 7,
+      "status": "success"
+    },
+    {
+      "id": 12,
+      "category": "Products",
+      "question": "How many products are in each category?",
+      "query": "SELECT c.cat_nm, COUNT(i.inv_id) as product_count FROM SUPPLY_CHAIN.CAT_REF c LEFT JOIN SUPPLY_CHAIN.INV_MAST i ON c.cat_cd = i.cat_cd GROUP BY c.cat_cd, c.cat_nm ORDER BY product_count DESC",
+      "row_count": 7,
+      "status": "success"
+    },
+    {
+      "id": 13,
+      "category": "Products",
+      "question": "What is the average price by product category?",
+      "query": "SELECT c.cat_nm, AVG(i.unit_prc) as avg_price, COUNT(i.inv_id) as product_count FROM SUPPLY_CHAIN.CAT_REF c LEFT JOIN SUPPLY_CHAIN.INV_MAST i ON c.cat_cd = i.cat_cd WHERE i.unit_prc > 0 GROUP BY c.cat_cd, c.cat_nm ORDER BY avg_price DESC",
+      "row_count": 4,
+      "status": "success"
+    },
+    {
+      "id": 14,
+      "category": "Products",
+      "question": "What category has the most products?",
+      "query": "SELECT c.cat_nm, COUNT(i.inv_id) as product_count FROM SUPPLY_CHAIN.CAT_REF c LEFT JOIN SUPPLY_CHAIN.INV_MAST i ON c.cat_cd = i.cat_cd GROUP BY c.cat_cd, c.cat_nm ORDER BY product_count DESC LIMIT 1",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 15,
+      "category": "Products",
+      "question": "What category has the highest average price?",
+      "query": "SELECT c.cat_nm, AVG(i.unit_prc) as avg_price FROM SUPPLY_CHAIN.CAT_REF c LEFT JOIN SUPPLY_CHAIN.INV_MAST i ON c.cat_cd = i.cat_cd WHERE i.unit_prc > 0 GROUP BY c.cat_cd, c.cat_nm ORDER BY avg_price DESC LIMIT 1",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 16,
+      "category": "Products",
+      "question": "What products are in a specific category?",
+      "query": "SELECT i.inv_id, i.inv_nm, i.unit_prc, c.cat_nm FROM SUPPLY_CHAIN.INV_MAST i JOIN SUPPLY_CHAIN.CAT_REF c ON i.cat_cd = c.cat_cd WHERE c.cat_nm = (SELECT cat_nm FROM SUPPLY_CHAIN.CAT_REF LIMIT 1) ORDER BY i.inv_nm",
+      "row_count": 650,
+      "status": "success"
+    },
+    {
+      "id": 17,
+      "category": "Products",
+      "question": "What is the total value of inventory by category?",
+      "query": "SELECT c.cat_nm, SUM(i.unit_prc) as total_value, COUNT(i.inv_id) as product_count FROM SUPPLY_CHAIN.CAT_REF c LEFT JOIN SUPPLY_CHAIN.INV_MAST i ON c.cat_cd = i.cat_cd WHERE i.unit_prc > 0 GROUP BY c.cat_cd, c.cat_nm ORDER BY total_value DESC",
+      "row_count": 4,
+      "status": "success"
+    },
+    {
+      "id": 19,
+      "category": "Products",
+      "question": "What products were scraped in the last 30 days?",
+      "query": "SELECT inv_id, inv_nm, scrp_dt FROM SUPPLY_CHAIN.INV_MAST WHERE scrp_dt >= DATEADD(day, -30, CURRENT_TIMESTAMP()) ORDER BY scrp_dt DESC",
+      "row_count": 652,
+      "status": "success"
+    },
+    {
+      "id": 20,
+      "category": "Products",
+      "question": "How many products were added each day?",
+      "query": "SELECT DATE(scrp_dt) as scrape_date, COUNT(*) as products_added FROM SUPPLY_CHAIN.INV_MAST GROUP BY DATE(scrp_dt) ORDER BY scrape_date DESC",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 21,
+      "category": "Products",
+      "question": "What products have no description?",
+      "query": "SELECT inv_id, inv_nm, unit_prc FROM SUPPLY_CHAIN.INV_MAST WHERE desc_txt IS NULL OR LENGTH(TRIM(desc_txt)) = 0",
+      "row_count": 650,
+      "status": "success"
+    },
+    {
+      "id": 22,
+      "category": "Products",
+      "question": "What products have duplicate names?",
+      "query": "SELECT inv_nm, COUNT(*) as count FROM SUPPLY_CHAIN.INV_MAST GROUP BY inv_nm HAVING COUNT(*) > 1 ORDER BY count DESC",
+      "row_count": 23,
+      "status": "success"
+    },
+    {
+      "id": 23,
+      "category": "Products",
+      "question": "What is the distribution of product prices?",
+      "query": "SELECT CASE WHEN unit_prc = 0 THEN 'Free' WHEN unit_prc < 5 THEN '$0-$5' WHEN unit_prc < 10 THEN '$5-$10' WHEN unit_prc < 20 THEN '$10-$20' WHEN unit_prc < 50 THEN '$20-$50' WHEN unit_prc < 100 THEN '$50-$100' ELSE 'Over $100' END as price_bucket, COUNT(*) as count FROM SUPPLY_CHAIN.INV_MAST GROUP BY price_bucket ORDER BY MIN(unit_prc)",
+      "row_count": 5,
+      "status": "success"
+    },
+    {
+      "id": 28,
+      "category": "Products",
+      "question": "What is the median price of products?",
+      "query": "SELECT MEDIAN(unit_prc) as median_price FROM SUPPLY_CHAIN.INV_MAST WHERE unit_prc > 0",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 29,
+      "category": "Products",
+      "question": "What products are priced between $20 and $50?",
+      "query": "SELECT inv_id, inv_nm, unit_prc FROM SUPPLY_CHAIN.INV_MAST WHERE unit_prc BETWEEN 20 AND 50 ORDER BY unit_prc",
+      "row_count": 12,
+      "status": "success"
+    },
+    {
+      "id": 30,
+      "category": "Products",
+      "question": "What is the standard deviation of product prices?",
+      "query": "SELECT STDDEV(unit_prc) as price_stddev FROM SUPPLY_CHAIN.INV_MAST WHERE unit_prc > 0",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 31,
+      "category": "Products",
+      "question": "What products have the longest names?",
+      "query": "SELECT inv_id, inv_nm, LENGTH(inv_nm) as name_length FROM SUPPLY_CHAIN.INV_MAST ORDER BY name_length DESC LIMIT 10",
+      "row_count": 10,
+      "status": "success"
+    },
+    {
+      "id": 32,
+      "category": "Products",
+      "question": "What percentage of products are in each category?",
+      "query": "SELECT c.cat_nm, COUNT(i.inv_id) as product_count, ROUND(100.0 * COUNT(i.inv_id) / (SELECT COUNT(*) FROM SUPPLY_CHAIN.INV_MAST), 2) as percentage FROM SUPPLY_CHAIN.CAT_REF c LEFT JOIN SUPPLY_CHAIN.INV_MAST i ON c.cat_cd = i.cat_cd GROUP BY c.cat_cd, c.cat_nm ORDER BY percentage DESC",
+      "row_count": 7,
+      "status": "success"
+    },
+    {
+      "id": 33,
+      "category": "Products",
+      "question": "What products were scraped most recently?",
+      "query": "SELECT inv_id, inv_nm, scrp_dt FROM SUPPLY_CHAIN.INV_MAST ORDER BY scrp_dt DESC LIMIT 20",
+      "row_count": 20,
+      "status": "success"
+    },
+    {
+      "id": 34,
+      "category": "Products",
+      "question": "What is the total inventory value?",
+      "query": "SELECT SUM(unit_prc) as total_inventory_value, COUNT(*) as total_products FROM SUPPLY_CHAIN.INV_MAST WHERE unit_prc > 0",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 35,
+      "category": "Products",
+      "question": "What products have prices that are outliers (more than 2 standard deviations from mean)?",
+      "query": "SELECT inv_id, inv_nm, unit_prc FROM SUPPLY_CHAIN.INV_MAST WHERE unit_prc > (SELECT AVG(unit_prc) + 2 * STDDEV(unit_prc) FROM SUPPLY_CHAIN.INV_MAST WHERE unit_prc > 0) ORDER BY unit_prc DESC",
+      "row_count": 2,
+      "status": "success"
+    },
+    {
+      "id": 36,
+      "category": "Products",
+      "question": "What is the price distribution by quartiles?",
+      "query": "SELECT PERCENTILE_CONT(0.25) WITHIN GROUP (ORDER BY unit_prc) as q1, PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY unit_prc) as median, PERCENTILE_CONT(0.75) WITHIN GROUP (ORDER BY unit_prc) as q3 FROM SUPPLY_CHAIN.INV_MAST WHERE unit_prc > 0",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 38,
+      "category": "Products",
+      "question": "What is the growth rate of products added over time?",
+      "query": "SELECT DATE(scrp_dt) as date, COUNT(*) as products_added, LAG(COUNT(*)) OVER (ORDER BY DATE(scrp_dt)) as prev_day_count FROM SUPPLY_CHAIN.INV_MAST GROUP BY DATE(scrp_dt) ORDER BY date DESC",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 40,
+      "category": "Products",
+      "question": "What is the cumulative count of products over time?",
+      "query": "SELECT DATE(scrp_dt) as date, COUNT(*) as daily_count, SUM(COUNT(*)) OVER (ORDER BY DATE(scrp_dt)) as cumulative_count FROM SUPPLY_CHAIN.INV_MAST GROUP BY DATE(scrp_dt) ORDER BY date",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 42,
+      "category": "Products",
+      "question": "What is the mode (most common) price?",
+      "query": "SELECT unit_prc, COUNT(*) as frequency FROM SUPPLY_CHAIN.INV_MAST WHERE unit_prc > 0 GROUP BY unit_prc ORDER BY frequency DESC LIMIT 1",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 43,
+      "category": "Products",
+      "question": "What products have names starting with 'A'?",
+      "query": "SELECT inv_id, inv_nm, unit_prc FROM SUPPLY_CHAIN.INV_MAST WHERE UPPER(inv_nm) LIKE 'A%' ORDER BY inv_nm",
+      "row_count": 50,
+      "status": "success"
+    },
+    {
+      "id": 44,
+      "category": "Products",
+      "question": "What products have names containing 'pro'?",
+      "query": "SELECT inv_id, inv_nm, unit_prc FROM SUPPLY_CHAIN.INV_MAST WHERE UPPER(inv_nm) LIKE '%PRO%' ORDER BY inv_nm",
+      "row_count": 52,
+      "status": "success"
+    },
+    {
+      "id": 45,
+      "category": "Products",
+      "question": "What is the price variance by category?",
+      "query": "SELECT c.cat_nm, VARIANCE(i.unit_prc) as price_variance FROM SUPPLY_CHAIN.CAT_REF c LEFT JOIN SUPPLY_CHAIN.INV_MAST i ON c.cat_cd = i.cat_cd WHERE i.unit_prc > 0 GROUP BY c.cat_cd, c.cat_nm ORDER BY price_variance DESC",
+      "row_count": 4,
+      "status": "success"
+    },
+    {
+      "id": 46,
+      "category": "Products",
+      "question": "What products have the same price?",
+      "query": "SELECT unit_prc, COUNT(*) as product_count, LISTAGG(inv_nm, ', ') WITHIN GROUP (ORDER BY inv_nm) as products FROM SUPPLY_CHAIN.INV_MAST WHERE unit_prc > 0 GROUP BY unit_prc HAVING COUNT(*) > 1 ORDER BY product_count DESC",
+      "row_count": 8,
+      "status": "success"
+    },
+    {
+      "id": 47,
+      "category": "Products",
+      "question": "What is the price difference between highest and lowest product?",
+      "query": "SELECT MAX(unit_prc) - MIN(unit_prc) as price_range FROM SUPPLY_CHAIN.INV_MAST WHERE unit_prc > 0",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 48,
+      "category": "Products",
+      "question": "What products are in the top 5% by price?",
+      "query": "SELECT inv_id, inv_nm, unit_prc FROM SUPPLY_CHAIN.INV_MAST WHERE unit_prc >= (SELECT PERCENTILE_CONT(0.95) WITHIN GROUP (ORDER BY unit_prc) FROM SUPPLY_CHAIN.INV_MAST WHERE unit_prc > 0) ORDER BY unit_prc DESC",
+      "row_count": 2,
+      "status": "success"
+    },
+    {
+      "id": 49,
+      "category": "Products",
+      "question": "What products are in the bottom 5% by price?",
+      "query": "SELECT inv_id, inv_nm, unit_prc FROM SUPPLY_CHAIN.INV_MAST WHERE unit_prc > 0 AND unit_prc <= (SELECT PERCENTILE_CONT(0.05) WITHIN GROUP (ORDER BY unit_prc) FROM SUPPLY_CHAIN.INV_MAST WHERE unit_prc > 0) ORDER BY unit_prc",
+      "row_count": 14,
+      "status": "success"
+    },
+    {
+      "id": 50,
+      "category": "Products",
+      "question": "What is the running total of product prices when sorted by price?",
+      "query": "SELECT inv_id, inv_nm, unit_prc, SUM(unit_prc) OVER (ORDER BY unit_prc) as running_total FROM SUPPLY_CHAIN.INV_MAST WHERE unit_prc > 0 ORDER BY unit_prc LIMIT 20",
+      "row_count": 20,
+      "status": "success"
+    },
+    {
+      "id": 52,
+      "category": "Products",
+      "question": "What is the coefficient of variation for product prices?",
+      "query": "SELECT STDDEV(unit_prc) / AVG(unit_prc) as coefficient_of_variation FROM SUPPLY_CHAIN.INV_MAST WHERE unit_prc > 0",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 56,
+      "category": "Products",
+      "question": "What is the price rank of each product?",
+      "query": "SELECT inv_id, inv_nm, unit_prc, RANK() OVER (ORDER BY unit_prc DESC) as price_rank FROM SUPPLY_CHAIN.INV_MAST WHERE unit_prc > 0 ORDER BY price_rank LIMIT 20",
+      "row_count": 20,
+      "status": "success"
+    },
+    {
+      "id": 58,
+      "category": "Products",
+      "question": "What is the price density distribution?",
+      "query": "SELECT FLOOR(unit_prc / 10) * 10 as price_bucket, COUNT(*) as count, ROUND(100.0 * COUNT(*) / SUM(COUNT(*)) OVER (), 2) as percentage FROM SUPPLY_CHAIN.INV_MAST WHERE unit_prc > 0 GROUP BY price_bucket ORDER BY price_bucket",
+      "row_count": 7,
+      "status": "success"
+    },
+    {
+      "id": 59,
+      "category": "Products",
+      "question": "What products have the highest price-to-name-length ratio?",
+      "query": "SELECT inv_id, inv_nm, unit_prc, LENGTH(inv_nm) as name_length, unit_prc / NULLIF(LENGTH(inv_nm), 0) as price_per_char FROM SUPPLY_CHAIN.INV_MAST WHERE unit_prc > 0 AND LENGTH(inv_nm) > 0 ORDER BY price_per_char DESC LIMIT 10",
+      "row_count": 10,
+      "status": "success"
+    },
+    {
+      "id": 60,
+      "category": "Products",
+      "question": "What is the interquartile range of product prices?",
+      "query": "SELECT PERCENTILE_CONT(0.75) WITHIN GROUP (ORDER BY unit_prc) - PERCENTILE_CONT(0.25) WITHIN GROUP (ORDER BY unit_prc) as iqr FROM SUPPLY_CHAIN.INV_MAST WHERE unit_prc > 0",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 61,
+      "category": "Books",
+      "question": "What are all the books in our catalog?",
+      "query": "SELECT bk_id, bk_ttl, unit_prc, auth_cd, rtg_val FROM SUPPLY_CHAIN.BK_CATALOG ORDER BY bk_ttl",
+      "row_count": 61,
+      "status": "success"
+    },
+    {
+      "id": 62,
+      "category": "Books",
+      "question": "What is the total number of books?",
+      "query": "SELECT COUNT(*) as total_books FROM SUPPLY_CHAIN.BK_CATALOG",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 63,
+      "category": "Books",
+      "question": "What is the average price of books?",
+      "query": "SELECT AVG(unit_prc) as avg_price FROM SUPPLY_CHAIN.BK_CATALOG WHERE unit_prc IS NOT NULL",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 64,
+      "category": "Books",
+      "question": "What is the most expensive book?",
+      "query": "SELECT bk_id, bk_ttl, unit_prc FROM SUPPLY_CHAIN.BK_CATALOG WHERE unit_prc = (SELECT MAX(unit_prc) FROM SUPPLY_CHAIN.BK_CATALOG) LIMIT 1",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 65,
+      "category": "Books",
+      "question": "What is the cheapest book?",
+      "query": "SELECT bk_id, bk_ttl, unit_prc FROM SUPPLY_CHAIN.BK_CATALOG WHERE unit_prc = (SELECT MIN(unit_prc) FROM SUPPLY_CHAIN.BK_CATALOG WHERE unit_prc > 0) LIMIT 1",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 68,
+      "category": "Books",
+      "question": "What is the price range of books?",
+      "query": "SELECT MIN(unit_prc) as min_price, MAX(unit_prc) as max_price, AVG(unit_prc) as avg_price FROM SUPPLY_CHAIN.BK_CATALOG WHERE unit_prc > 0",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 69,
+      "category": "Books",
+      "question": "What are the top 10 most expensive books?",
+      "query": "SELECT bk_id, bk_ttl, unit_prc FROM SUPPLY_CHAIN.BK_CATALOG WHERE unit_prc > 0 ORDER BY unit_prc DESC LIMIT 10",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 70,
+      "category": "Books",
+      "question": "What are the top 10 cheapest books?",
+      "query": "SELECT bk_id, bk_ttl, unit_prc FROM SUPPLY_CHAIN.BK_CATALOG WHERE unit_prc > 0 ORDER BY unit_prc LIMIT 10",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 71,
+      "category": "Books",
+      "question": "What are all the authors?",
+      "query": "SELECT DISTINCT auth_cd, auth_nm FROM SUPPLY_CHAIN.AUTH_REF ORDER BY auth_nm",
+      "row_count": 2,
+      "status": "success"
+    },
+    {
+      "id": 72,
+      "category": "Books",
+      "question": "How many books does each author have?",
+      "query": "SELECT a.auth_nm, COUNT(b.bk_id) as book_count FROM SUPPLY_CHAIN.AUTH_REF a LEFT JOIN SUPPLY_CHAIN.BK_CATALOG b ON a.auth_cd = b.auth_cd GROUP BY a.auth_cd, a.auth_nm ORDER BY book_count DESC",
+      "row_count": 2,
+      "status": "success"
+    },
+    {
+      "id": 73,
+      "category": "Books",
+      "question": "What author has the most books?",
+      "query": "SELECT a.auth_nm, COUNT(b.bk_id) as book_count FROM SUPPLY_CHAIN.AUTH_REF a LEFT JOIN SUPPLY_CHAIN.BK_CATALOG b ON a.auth_cd = b.auth_cd GROUP BY a.auth_cd, a.auth_nm ORDER BY book_count DESC LIMIT 1",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 74,
+      "category": "Books",
+      "question": "What is the average price by author?",
+      "query": "SELECT a.auth_nm, AVG(b.unit_prc) as avg_price, COUNT(b.bk_id) as book_count FROM SUPPLY_CHAIN.AUTH_REF a LEFT JOIN SUPPLY_CHAIN.BK_CATALOG b ON a.auth_cd = b.auth_cd WHERE b.unit_prc > 0 GROUP BY a.auth_cd, a.auth_nm ORDER BY avg_price DESC",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 75,
+      "category": "Books",
+      "question": "What author has the highest average book price?",
+      "query": "SELECT a.auth_nm, AVG(b.unit_prc) as avg_price FROM SUPPLY_CHAIN.AUTH_REF a LEFT JOIN SUPPLY_CHAIN.BK_CATALOG b ON a.auth_cd = b.auth_cd WHERE b.unit_prc > 0 GROUP BY a.auth_cd, a.auth_nm ORDER BY avg_price DESC LIMIT 1",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 76,
+      "category": "Books",
+      "question": "What books are by a specific author?",
+      "query": "SELECT b.bk_id, b.bk_ttl, b.unit_prc, a.auth_nm FROM SUPPLY_CHAIN.BK_CATALOG b JOIN SUPPLY_CHAIN.AUTH_REF a ON b.auth_cd = a.auth_cd WHERE a.auth_nm = (SELECT auth_nm FROM SUPPLY_CHAIN.AUTH_REF LIMIT 1) ORDER BY b.bk_ttl",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 77,
+      "category": "Books",
+      "question": "What is the total value of books by each author?",
+      "query": "SELECT a.auth_nm, SUM(b.unit_prc) as total_value, COUNT(b.bk_id) as book_count FROM SUPPLY_CHAIN.AUTH_REF a LEFT JOIN SUPPLY_CHAIN.BK_CATALOG b ON a.auth_cd = b.auth_cd WHERE b.unit_prc > 0 GROUP BY a.auth_cd, a.auth_nm ORDER BY total_value DESC",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 78,
+      "category": "Books",
+      "question": "What is the average rating of all books?",
+      "query": "SELECT AVG(rtg_val) as avg_rating FROM SUPPLY_CHAIN.BK_CATALOG WHERE rtg_val IS NOT NULL",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 81,
+      "category": "Books",
+      "question": "How many books have each rating?",
+      "query": "SELECT rtg_val, COUNT(*) as book_count FROM SUPPLY_CHAIN.BK_CATALOG GROUP BY rtg_val ORDER BY rtg_val DESC",
+      "row_count": 2,
+      "status": "success"
+    },
+    {
+      "id": 82,
+      "category": "Books",
+      "question": "What is the average price by rating?",
+      "query": "SELECT rtg_val, AVG(unit_prc) as avg_price, COUNT(*) as book_count FROM SUPPLY_CHAIN.BK_CATALOG WHERE unit_prc > 0 GROUP BY rtg_val ORDER BY rtg_val DESC",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 83,
+      "category": "Books",
+      "question": "What are the highest rated books?",
+      "query": "SELECT bk_id, bk_ttl, rtg_val, unit_prc FROM SUPPLY_CHAIN.BK_CATALOG WHERE rtg_val = (SELECT MAX(rtg_val) FROM SUPPLY_CHAIN.BK_CATALOG) ORDER BY bk_ttl",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 84,
+      "category": "Books",
+      "question": "What books have ratings above 3?",
+      "query": "SELECT bk_id, bk_ttl, rtg_val, unit_prc FROM SUPPLY_CHAIN.BK_CATALOG WHERE rtg_val > 3 ORDER BY rtg_val DESC, bk_ttl",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 85,
+      "category": "Books",
+      "question": "What is the correlation between book price and rating?",
+      "query": "SELECT CORR(unit_prc, rtg_val) as price_rating_correlation FROM SUPPLY_CHAIN.BK_CATALOG WHERE unit_prc > 0 AND rtg_val IS NOT NULL",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 86,
+      "category": "Books",
+      "question": "What is the availability status of books?",
+      "query": "SELECT avail_sts, COUNT(*) as book_count FROM SUPPLY_CHAIN.BK_CATALOG GROUP BY avail_sts ORDER BY book_count DESC",
+      "row_count": 2,
+      "status": "success"
+    },
+    {
+      "id": 87,
+      "category": "Books",
+      "question": "What books are in stock?",
+      "query": "SELECT bk_id, bk_ttl, avail_sts, unit_prc FROM SUPPLY_CHAIN.BK_CATALOG WHERE UPPER(avail_sts) LIKE '%IN STOCK%' OR UPPER(avail_sts) LIKE '%AVAILABLE%' ORDER BY bk_ttl",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 89,
+      "category": "Books",
+      "question": "What is the average price by availability status?",
+      "query": "SELECT avail_sts, AVG(unit_prc) as avg_price, COUNT(*) as book_count FROM SUPPLY_CHAIN.BK_CATALOG WHERE unit_prc > 0 GROUP BY avail_sts ORDER BY avg_price DESC",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 95,
+      "category": "Books",
+      "question": "What books have the longest titles?",
+      "query": "SELECT bk_id, bk_ttl, LENGTH(bk_ttl) as title_length FROM SUPPLY_CHAIN.BK_CATALOG ORDER BY title_length DESC LIMIT 10",
+      "row_count": 10,
+      "status": "success"
+    },
+    {
+      "id": 96,
+      "category": "Books",
+      "question": "What books were scraped most recently?",
+      "query": "SELECT bk_id, bk_ttl, scrp_dt FROM SUPPLY_CHAIN.BK_CATALOG ORDER BY scrp_dt DESC LIMIT 20",
+      "row_count": 20,
+      "status": "success"
+    },
+    {
+      "id": 97,
+      "category": "Books",
+      "question": "What is the total value of all books?",
+      "query": "SELECT SUM(unit_prc) as total_value, COUNT(*) as total_books FROM SUPPLY_CHAIN.BK_CATALOG WHERE unit_prc > 0",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 98,
+      "category": "Books",
+      "question": "What books have no description?",
+      "query": "SELECT bk_id, bk_ttl, unit_prc FROM SUPPLY_CHAIN.BK_CATALOG WHERE desc_txt IS NULL OR LENGTH(TRIM(desc_txt)) = 0",
+      "row_count": 60,
+      "status": "success"
+    },
+    {
+      "id": 99,
+      "category": "Books",
+      "question": "What is the median book price?",
+      "query": "SELECT MEDIAN(unit_prc) as median_price FROM SUPPLY_CHAIN.BK_CATALOG WHERE unit_prc > 0",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 100,
+      "category": "Books",
+      "question": "What books are priced between \u00a310 and \u00a320?",
+      "query": "SELECT bk_id, bk_ttl, unit_prc FROM SUPPLY_CHAIN.BK_CATALOG WHERE unit_prc BETWEEN 10 AND 20 ORDER BY unit_prc",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 101,
+      "category": "Books",
+      "question": "What is the standard deviation of book prices?",
+      "query": "SELECT STDDEV(unit_prc) as price_stddev FROM SUPPLY_CHAIN.BK_CATALOG WHERE unit_prc > 0",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 102,
+      "category": "Books",
+      "question": "What percentage of books have each rating?",
+      "query": "SELECT rtg_val, COUNT(*) as book_count, ROUND(100.0 * COUNT(*) / (SELECT COUNT(*) FROM SUPPLY_CHAIN.BK_CATALOG), 2) as percentage FROM SUPPLY_CHAIN.BK_CATALOG GROUP BY rtg_val ORDER BY rtg_val DESC",
+      "row_count": 2,
+      "status": "success"
+    },
+    {
+      "id": 104,
+      "category": "Books",
+      "question": "What is the price rank of each book?",
+      "query": "SELECT bk_id, bk_ttl, unit_prc, RANK() OVER (ORDER BY unit_prc DESC) as price_rank FROM SUPPLY_CHAIN.BK_CATALOG WHERE unit_prc > 0 ORDER BY price_rank LIMIT 20",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 105,
+      "category": "Books",
+      "question": "What books have the best value (high rating, low price)?",
+      "query": "SELECT bk_id, bk_ttl, unit_prc, rtg_val, rtg_val / NULLIF(unit_prc, 0) as value_score FROM SUPPLY_CHAIN.BK_CATALOG WHERE unit_prc > 0 AND rtg_val IS NOT NULL ORDER BY value_score DESC LIMIT 10",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 106,
+      "category": "Books",
+      "question": "What is the average rating by author?",
+      "query": "SELECT a.auth_nm, AVG(b.rtg_val) as avg_rating, COUNT(b.bk_id) as book_count FROM SUPPLY_CHAIN.AUTH_REF a LEFT JOIN SUPPLY_CHAIN.BK_CATALOG b ON a.auth_cd = b.auth_cd WHERE b.rtg_val IS NOT NULL GROUP BY a.auth_cd, a.auth_nm ORDER BY avg_rating DESC",
+      "row_count": 2,
+      "status": "success"
+    },
+    {
+      "id": 107,
+      "category": "Books",
+      "question": "What books have duplicate titles?",
+      "query": "SELECT bk_ttl, COUNT(*) as count FROM SUPPLY_CHAIN.BK_CATALOG GROUP BY bk_ttl HAVING COUNT(*) > 1 ORDER BY count DESC",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 108,
+      "category": "Books",
+      "question": "What is the distribution of book prices by quartiles?",
+      "query": "SELECT PERCENTILE_CONT(0.25) WITHIN GROUP (ORDER BY unit_prc) as q1, PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY unit_prc) as median, PERCENTILE_CONT(0.75) WITHIN GROUP (ORDER BY unit_prc) as q3 FROM SUPPLY_CHAIN.BK_CATALOG WHERE unit_prc > 0",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 109,
+      "category": "Books",
+      "question": "What books were added each day?",
+      "query": "SELECT DATE(scrp_dt) as scrape_date, COUNT(*) as books_added FROM SUPPLY_CHAIN.BK_CATALOG GROUP BY DATE(scrp_dt) ORDER BY scrape_date DESC",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 110,
+      "category": "Books",
+      "question": "What is the cumulative count of books over time?",
+      "query": "SELECT DATE(scrp_dt) as date, COUNT(*) as daily_count, SUM(COUNT(*)) OVER (ORDER BY DATE(scrp_dt)) as cumulative_count FROM SUPPLY_CHAIN.BK_CATALOG GROUP BY DATE(scrp_dt) ORDER BY date",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 112,
+      "category": "Books",
+      "question": "What is the interquartile range of book prices?",
+      "query": "SELECT PERCENTILE_CONT(0.75) WITHIN GROUP (ORDER BY unit_prc) - PERCENTILE_CONT(0.25) WITHIN GROUP (ORDER BY unit_prc) as iqr FROM SUPPLY_CHAIN.BK_CATALOG WHERE unit_prc > 0",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 114,
+      "category": "Books",
+      "question": "What is the mode (most common) book price?",
+      "query": "SELECT unit_prc, COUNT(*) as frequency FROM SUPPLY_CHAIN.BK_CATALOG WHERE unit_prc > 0 GROUP BY unit_prc ORDER BY frequency DESC LIMIT 1",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 115,
+      "category": "Books",
+      "question": "What books have the highest price-to-rating ratio?",
+      "query": "SELECT bk_id, bk_ttl, unit_prc, rtg_val, unit_prc / NULLIF(rtg_val, 0) as price_per_rating FROM SUPPLY_CHAIN.BK_CATALOG WHERE unit_prc > 0 AND rtg_val > 0 ORDER BY price_per_rating DESC LIMIT 10",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 116,
+      "category": "Books",
+      "question": "What is the variance of book prices?",
+      "query": "SELECT VARIANCE(unit_prc) as price_variance FROM SUPPLY_CHAIN.BK_CATALOG WHERE unit_prc > 0",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 118,
+      "category": "Books",
+      "question": "What is the running total of book prices when sorted by price?",
+      "query": "SELECT bk_id, bk_ttl, unit_prc, SUM(unit_prc) OVER (ORDER BY unit_prc) as running_total FROM SUPPLY_CHAIN.BK_CATALOG WHERE unit_prc > 0 ORDER BY unit_prc LIMIT 20",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 120,
+      "category": "Books",
+      "question": "What is the coefficient of variation for book prices?",
+      "query": "SELECT STDDEV(unit_prc) / AVG(unit_prc) as coefficient_of_variation FROM SUPPLY_CHAIN.BK_CATALOG WHERE unit_prc > 0",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 121,
+      "category": "Films",
+      "question": "What are all the films in our catalog?",
+      "query": "SELECT media_id, media_ttl, yr_val, dir_cd, awd_cat_cd FROM SUPPLY_CHAIN.MEDIA_MAST ORDER BY media_ttl",
+      "row_count": 18,
+      "status": "success"
+    },
+    {
+      "id": 122,
+      "category": "Films",
+      "question": "What is the total number of films?",
+      "query": "SELECT COUNT(*) as total_films FROM SUPPLY_CHAIN.MEDIA_MAST",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 123,
+      "category": "Films",
+      "question": "What films were released in 2010?",
+      "query": "SELECT media_id, media_ttl, yr_val FROM SUPPLY_CHAIN.MEDIA_MAST WHERE yr_val = 2010 ORDER BY media_ttl",
+      "row_count": 3,
+      "status": "success"
+    },
+    {
+      "id": 124,
+      "category": "Films",
+      "question": "What films were released in 2015?",
+      "query": "SELECT media_id, media_ttl, yr_val FROM SUPPLY_CHAIN.MEDIA_MAST WHERE yr_val = 2015 ORDER BY media_ttl",
+      "row_count": 3,
+      "status": "success"
+    },
+    {
+      "id": 125,
+      "category": "Films",
+      "question": "What is the range of years for films?",
+      "query": "SELECT MIN(yr_val) as earliest_year, MAX(yr_val) as latest_year, COUNT(*) as total_films FROM SUPPLY_CHAIN.MEDIA_MAST",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 126,
+      "category": "Films",
+      "question": "How many films were released each year?",
+      "query": "SELECT yr_val, COUNT(*) as film_count FROM SUPPLY_CHAIN.MEDIA_MAST GROUP BY yr_val ORDER BY yr_val",
+      "row_count": 6,
+      "status": "success"
+    },
+    {
+      "id": 127,
+      "category": "Films",
+      "question": "What year has the most films?",
+      "query": "SELECT yr_val, COUNT(*) as film_count FROM SUPPLY_CHAIN.MEDIA_MAST GROUP BY yr_val ORDER BY film_count DESC LIMIT 1",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 128,
+      "category": "Films",
+      "question": "What are the most recent films?",
+      "query": "SELECT media_id, media_ttl, yr_val FROM SUPPLY_CHAIN.MEDIA_MAST ORDER BY yr_val DESC, media_ttl LIMIT 10",
+      "row_count": 10,
+      "status": "success"
+    },
+    {
+      "id": 129,
+      "category": "Films",
+      "question": "What are the oldest films?",
+      "query": "SELECT media_id, media_ttl, yr_val FROM SUPPLY_CHAIN.MEDIA_MAST ORDER BY yr_val, media_ttl LIMIT 10",
+      "row_count": 10,
+      "status": "success"
+    },
+    {
+      "id": 130,
+      "category": "Films",
+      "question": "What films were released between 2012 and 2014?",
+      "query": "SELECT media_id, media_ttl, yr_val FROM SUPPLY_CHAIN.MEDIA_MAST WHERE yr_val BETWEEN 2012 AND 2014 ORDER BY yr_val, media_ttl",
+      "row_count": 9,
+      "status": "success"
+    },
+    {
+      "id": 131,
+      "category": "Films",
+      "question": "What are all the directors?",
+      "query": "SELECT DISTINCT dir_cd, dir_nm FROM SUPPLY_CHAIN.DIR_REF ORDER BY dir_nm",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 132,
+      "category": "Films",
+      "question": "How many films did each director make?",
+      "query": "SELECT d.dir_nm, COUNT(m.media_id) as film_count FROM SUPPLY_CHAIN.DIR_REF d LEFT JOIN SUPPLY_CHAIN.MEDIA_MAST m ON d.dir_cd = m.dir_cd GROUP BY d.dir_cd, d.dir_nm ORDER BY film_count DESC",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 133,
+      "category": "Films",
+      "question": "What director has the most films?",
+      "query": "SELECT d.dir_nm, COUNT(m.media_id) as film_count FROM SUPPLY_CHAIN.DIR_REF d LEFT JOIN SUPPLY_CHAIN.MEDIA_MAST m ON d.dir_cd = m.dir_cd GROUP BY d.dir_cd, d.dir_nm ORDER BY film_count DESC LIMIT 1",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 134,
+      "category": "Films",
+      "question": "What films are directed by a specific director?",
+      "query": "SELECT m.media_id, m.media_ttl, m.yr_val, d.dir_nm FROM SUPPLY_CHAIN.MEDIA_MAST m JOIN SUPPLY_CHAIN.DIR_REF d ON m.dir_cd = d.dir_cd WHERE d.dir_nm = (SELECT dir_nm FROM SUPPLY_CHAIN.DIR_REF LIMIT 1) ORDER BY m.media_ttl",
+      "row_count": 54,
+      "status": "success"
+    },
+    {
+      "id": 136,
+      "category": "Films",
+      "question": "What are all the award categories?",
+      "query": "SELECT DISTINCT awd_cat_cd, awd_nm, awd_typ FROM SUPPLY_CHAIN.AWARD_REF ORDER BY awd_nm",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 137,
+      "category": "Films",
+      "question": "How many films won each award?",
+      "query": "SELECT a.awd_nm, COUNT(x.media_id) as film_count FROM SUPPLY_CHAIN.AWARD_REF a LEFT JOIN SUPPLY_CHAIN.MEDIA_AWD_XREF x ON a.awd_cat_cd = x.awd_cat_cd GROUP BY a.awd_cat_cd, a.awd_nm ORDER BY film_count DESC",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 138,
+      "category": "Films",
+      "question": "What award category has the most winners?",
+      "query": "SELECT a.awd_nm, COUNT(x.media_id) as film_count FROM SUPPLY_CHAIN.AWARD_REF a LEFT JOIN SUPPLY_CHAIN.MEDIA_AWD_XREF x ON a.awd_cat_cd = x.awd_cat_cd GROUP BY a.awd_cat_cd, a.awd_nm ORDER BY film_count DESC LIMIT 1",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 139,
+      "category": "Films",
+      "question": "What films won a specific award?",
+      "query": "SELECT m.media_id, m.media_ttl, m.yr_val, a.awd_nm, x.awd_yr FROM SUPPLY_CHAIN.MEDIA_MAST m JOIN SUPPLY_CHAIN.MEDIA_AWD_XREF x ON m.media_id = x.media_id JOIN SUPPLY_CHAIN.AWARD_REF a ON x.awd_cat_cd = a.awd_cat_cd WHERE a.awd_nm = (SELECT awd_nm FROM SUPPLY_CHAIN.AWARD_REF LIMIT 1) ORDER BY m.media_ttl",
+      "row_count": 54,
+      "status": "success"
+    },
+    {
+      "id": 140,
+      "category": "Films",
+      "question": "What films won awards in 2010?",
+      "query": "SELECT DISTINCT m.media_id, m.media_ttl, m.yr_val FROM SUPPLY_CHAIN.MEDIA_MAST m JOIN SUPPLY_CHAIN.MEDIA_AWD_XREF x ON m.media_id = x.media_id WHERE x.awd_yr = 2010 ORDER BY m.media_ttl",
+      "row_count": 3,
+      "status": "success"
+    },
+    {
+      "id": 141,
+      "category": "Films",
+      "question": "What awards were given each year?",
+      "query": "SELECT x.awd_yr, COUNT(DISTINCT x.media_id) as films_with_awards, COUNT(*) as total_awards FROM SUPPLY_CHAIN.MEDIA_AWD_XREF x GROUP BY x.awd_yr ORDER BY x.awd_yr",
+      "row_count": 6,
+      "status": "success"
+    },
+    {
+      "id": 147,
+      "category": "Films",
+      "question": "What films have the most actors?",
+      "query": "SELECT m.media_id, m.media_ttl, COUNT(x.perf_cd) as actor_count FROM SUPPLY_CHAIN.MEDIA_MAST m LEFT JOIN SUPPLY_CHAIN.MEDIA_PERF_XREF x ON m.media_id = x.media_id GROUP BY m.media_id, m.media_ttl ORDER BY actor_count DESC LIMIT 10",
+      "row_count": 10,
+      "status": "success"
+    },
+    {
+      "id": 148,
+      "category": "Films",
+      "question": "What films have the longest titles?",
+      "query": "SELECT media_id, media_ttl, LENGTH(media_ttl) as title_length FROM SUPPLY_CHAIN.MEDIA_MAST ORDER BY title_length DESC LIMIT 10",
+      "row_count": 10,
+      "status": "success"
+    },
+    {
+      "id": 149,
+      "category": "Films",
+      "question": "What films were scraped most recently?",
+      "query": "SELECT media_id, media_ttl, scrp_dt FROM SUPPLY_CHAIN.MEDIA_MAST ORDER BY scrp_dt DESC LIMIT 20",
+      "row_count": 18,
+      "status": "success"
+    },
+    {
+      "id": 151,
+      "category": "Films",
+      "question": "What films have duplicate titles?",
+      "query": "SELECT media_ttl, COUNT(*) as count FROM SUPPLY_CHAIN.MEDIA_MAST GROUP BY media_ttl HAVING COUNT(*) > 1 ORDER BY count DESC",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 153,
+      "category": "Films",
+      "question": "What percentage of films were released each year?",
+      "query": "SELECT yr_val, COUNT(*) as film_count, ROUND(100.0 * COUNT(*) / (SELECT COUNT(*) FROM SUPPLY_CHAIN.MEDIA_MAST), 2) as percentage FROM SUPPLY_CHAIN.MEDIA_MAST GROUP BY yr_val ORDER BY yr_val",
+      "row_count": 6,
+      "status": "success"
+    },
+    {
+      "id": 154,
+      "category": "Films",
+      "question": "What is the average number of awards per film?",
+      "query": "SELECT AVG(award_count) as avg_awards_per_film FROM (SELECT m.media_id, COUNT(x.awd_cat_cd) as award_count FROM SUPPLY_CHAIN.MEDIA_MAST m LEFT JOIN SUPPLY_CHAIN.MEDIA_AWD_XREF x ON m.media_id = x.media_id GROUP BY m.media_id)",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 155,
+      "category": "Films",
+      "question": "What is the average number of actors per film?",
+      "query": "SELECT AVG(actor_count) as avg_actors_per_film FROM (SELECT m.media_id, COUNT(x.perf_cd) as actor_count FROM SUPPLY_CHAIN.MEDIA_MAST m LEFT JOIN SUPPLY_CHAIN.MEDIA_PERF_XREF x ON m.media_id = x.media_id GROUP BY m.media_id)",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 157,
+      "category": "Films",
+      "question": "What films have no actors listed?",
+      "query": "SELECT m.media_id, m.media_ttl, m.yr_val FROM SUPPLY_CHAIN.MEDIA_MAST m LEFT JOIN SUPPLY_CHAIN.MEDIA_PERF_XREF x ON m.media_id = x.media_id WHERE x.media_id IS NULL",
+      "row_count": 18,
+      "status": "success"
+    },
+    {
+      "id": 158,
+      "category": "Films",
+      "question": "What is the distribution of films by year?",
+      "query": "SELECT yr_val, COUNT(*) as film_count, ROUND(100.0 * COUNT(*) / SUM(COUNT(*)) OVER (), 2) as percentage FROM SUPPLY_CHAIN.MEDIA_MAST GROUP BY yr_val ORDER BY yr_val",
+      "row_count": 6,
+      "status": "success"
+    },
+    {
+      "id": 159,
+      "category": "Films",
+      "question": "What films were added each day?",
+      "query": "SELECT DATE(scrp_dt) as scrape_date, COUNT(*) as films_added FROM SUPPLY_CHAIN.MEDIA_MAST GROUP BY DATE(scrp_dt) ORDER BY scrape_date DESC",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 160,
+      "category": "Films",
+      "question": "What is the cumulative count of films over time?",
+      "query": "SELECT DATE(scrp_dt) as date, COUNT(*) as daily_count, SUM(COUNT(*)) OVER (ORDER BY DATE(scrp_dt)) as cumulative_count FROM SUPPLY_CHAIN.MEDIA_MAST GROUP BY DATE(scrp_dt) ORDER BY date",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 162,
+      "category": "Films",
+      "question": "What is the year-over-year growth in number of films?",
+      "query": "SELECT yr_val, COUNT(*) as film_count, LAG(COUNT(*)) OVER (ORDER BY yr_val) as prev_year_count FROM SUPPLY_CHAIN.MEDIA_MAST GROUP BY yr_val ORDER BY yr_val",
+      "row_count": 6,
+      "status": "success"
+    },
+    {
+      "id": 163,
+      "category": "Films",
+      "question": "What is the median year of film releases?",
+      "query": "SELECT MEDIAN(yr_val) as median_year FROM SUPPLY_CHAIN.MEDIA_MAST",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 164,
+      "category": "Films",
+      "question": "What is the standard deviation of release years?",
+      "query": "SELECT STDDEV(yr_val) as year_stddev FROM SUPPLY_CHAIN.MEDIA_MAST",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 165,
+      "category": "Films",
+      "question": "What is the range of award years?",
+      "query": "SELECT MIN(awd_yr) as earliest_award_year, MAX(awd_yr) as latest_award_year, COUNT(*) as total_awards FROM SUPPLY_CHAIN.MEDIA_AWD_XREF",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 167,
+      "category": "Films",
+      "question": "What is the mode (most common) release year?",
+      "query": "SELECT yr_val, COUNT(*) as frequency FROM SUPPLY_CHAIN.MEDIA_MAST GROUP BY yr_val ORDER BY frequency DESC LIMIT 1",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 168,
+      "category": "Films",
+      "question": "What is the variance of release years?",
+      "query": "SELECT VARIANCE(yr_val) as year_variance FROM SUPPLY_CHAIN.MEDIA_MAST",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 169,
+      "category": "Films",
+      "question": "What films were released in leap years?",
+      "query": "SELECT media_id, media_ttl, yr_val FROM SUPPLY_CHAIN.MEDIA_MAST WHERE MOD(yr_val, 4) = 0 AND (MOD(yr_val, 100) != 0 OR MOD(yr_val, 400) = 0) ORDER BY yr_val",
+      "row_count": 3,
+      "status": "success"
+    },
+    {
+      "id": 170,
+      "category": "Films",
+      "question": "What is the interquartile range of release years?",
+      "query": "SELECT PERCENTILE_CONT(0.75) WITHIN GROUP (ORDER BY yr_val) - PERCENTILE_CONT(0.25) WITHIN GROUP (ORDER BY yr_val) as iqr FROM SUPPLY_CHAIN.MEDIA_MAST",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 171,
+      "category": "Films",
+      "question": "What is the coefficient of variation for release years?",
+      "query": "SELECT STDDEV(yr_val) / AVG(yr_val) as coefficient_of_variation FROM SUPPLY_CHAIN.MEDIA_MAST",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 172,
+      "category": "Films",
+      "question": "What films have the highest number of awards and actors combined?",
+      "query": "SELECT m.media_id, m.media_ttl, COUNT(DISTINCT x1.awd_cat_cd) + COUNT(DISTINCT x2.perf_cd) as total_count FROM SUPPLY_CHAIN.MEDIA_MAST m LEFT JOIN SUPPLY_CHAIN.MEDIA_AWD_XREF x1 ON m.media_id = x1.media_id LEFT JOIN SUPPLY_CHAIN.MEDIA_PERF_XREF x2 ON m.media_id = x2.media_id GROUP BY m.media_id, m.media_ttl ORDER BY total_count DESC LIMIT 10",
+      "row_count": 10,
+      "status": "success"
+    },
+    {
+      "id": 175,
+      "category": "Films",
+      "question": "What films won awards in consecutive years?",
+      "query": "SELECT m1.media_ttl as film1, x1.awd_yr as year1, m2.media_ttl as film2, x2.awd_yr as year2 FROM SUPPLY_CHAIN.MEDIA_MAST m1 JOIN SUPPLY_CHAIN.MEDIA_AWD_XREF x1 ON m1.media_id = x1.media_id JOIN SUPPLY_CHAIN.MEDIA_MAST m2 ON m2.media_id != m1.media_id JOIN SUPPLY_CHAIN.MEDIA_AWD_XREF x2 ON m2.media_id = x2.media_id WHERE x2.awd_yr = x1.awd_yr + 1 LIMIT 10",
+      "row_count": 10,
+      "status": "success"
+    },
+    {
+      "id": 177,
+      "category": "Films",
+      "question": "What films have the same director and year?",
+      "query": "SELECT dir_cd, yr_val, COUNT(*) as film_count, LISTAGG(media_ttl, ', ') WITHIN GROUP (ORDER BY media_ttl) as films FROM SUPPLY_CHAIN.MEDIA_MAST GROUP BY dir_cd, yr_val HAVING COUNT(*) > 1",
+      "row_count": 6,
+      "status": "success"
+    },
+    {
+      "id": 179,
+      "category": "Films",
+      "question": "What films won awards in the same year they were released?",
+      "query": "SELECT m.media_id, m.media_ttl, m.yr_val, x.awd_yr FROM SUPPLY_CHAIN.MEDIA_MAST m JOIN SUPPLY_CHAIN.MEDIA_AWD_XREF x ON m.media_id = x.media_id WHERE m.yr_val = x.awd_yr ORDER BY m.media_ttl",
+      "row_count": 18,
+      "status": "success"
+    },
+    {
+      "id": 180,
+      "category": "Films",
+      "question": "What films have the same title but different years?",
+      "query": "SELECT media_ttl, COUNT(DISTINCT yr_val) as year_count, LISTAGG(yr_val, ', ') WITHIN GROUP (ORDER BY yr_val) as years FROM SUPPLY_CHAIN.MEDIA_MAST GROUP BY media_ttl HAVING COUNT(DISTINCT yr_val) > 1",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 181,
+      "category": "Cross-Domain",
+      "question": "What is the total count of all items (products, books, films)?",
+      "query": "SELECT 'Products' as type, COUNT(*) as count FROM SUPPLY_CHAIN.INV_MAST UNION ALL SELECT 'Books', COUNT(*) FROM SUPPLY_CHAIN.BK_CATALOG UNION ALL SELECT 'Films', COUNT(*) FROM SUPPLY_CHAIN.MEDIA_MAST",
+      "row_count": 3,
+      "status": "success"
+    },
+    {
+      "id": 182,
+      "category": "Cross-Domain",
+      "question": "What is the average price of products vs books?",
+      "query": "SELECT 'Products' as type, AVG(unit_prc) as avg_price FROM SUPPLY_CHAIN.INV_MAST WHERE unit_prc > 0 UNION ALL SELECT 'Books', AVG(unit_prc) FROM SUPPLY_CHAIN.BK_CATALOG WHERE unit_prc > 0",
+      "row_count": 2,
+      "status": "success"
+    },
+    {
+      "id": 183,
+      "category": "Cross-Domain",
+      "question": "What items were scraped on the same day across all sources?",
+      "query": "SELECT DATE(scrp_dt) as scrape_date, 'Products' as type, COUNT(*) as count FROM SUPPLY_CHAIN.INV_MAST GROUP BY DATE(scrp_dt) UNION ALL SELECT DATE(scrp_dt), 'Books', COUNT(*) FROM SUPPLY_CHAIN.BK_CATALOG GROUP BY DATE(scrp_dt) UNION ALL SELECT DATE(scrp_dt), 'Films', COUNT(*) FROM SUPPLY_CHAIN.MEDIA_MAST GROUP BY DATE(scrp_dt) ORDER BY scrape_date DESC, type",
+      "row_count": 3,
+      "status": "success"
+    },
+    {
+      "id": 184,
+      "category": "Cross-Domain",
+      "question": "What is the total value of all inventory (products and books)?",
+      "query": "SELECT SUM(unit_prc) as total_value FROM (SELECT unit_prc FROM SUPPLY_CHAIN.INV_MAST WHERE unit_prc > 0 UNION ALL SELECT unit_prc FROM SUPPLY_CHAIN.BK_CATALOG WHERE unit_prc > 0)",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 186,
+      "category": "Cross-Domain",
+      "question": "What is the growth rate of items added over time across all sources?",
+      "query": "SELECT DATE(scrp_dt) as date, COUNT(*) as items_added, 'Products' as type FROM SUPPLY_CHAIN.INV_MAST GROUP BY DATE(scrp_dt) UNION ALL SELECT DATE(scrp_dt), COUNT(*), 'Books' FROM SUPPLY_CHAIN.BK_CATALOG GROUP BY DATE(scrp_dt) UNION ALL SELECT DATE(scrp_dt), COUNT(*), 'Films' FROM SUPPLY_CHAIN.MEDIA_MAST GROUP BY DATE(scrp_dt) ORDER BY date DESC, type",
+      "row_count": 3,
+      "status": "success"
+    },
+    {
+      "id": 187,
+      "category": "Cross-Domain",
+      "question": "What items have the longest names across all types?",
+      "query": "SELECT 'Product' as type, inv_id as id, inv_nm as name, LENGTH(inv_nm) as name_length FROM SUPPLY_CHAIN.INV_MAST UNION ALL SELECT 'Book', bk_id, bk_ttl, LENGTH(bk_ttl) FROM SUPPLY_CHAIN.BK_CATALOG UNION ALL SELECT 'Film', media_id, media_ttl, LENGTH(media_ttl) FROM SUPPLY_CHAIN.MEDIA_MAST ORDER BY name_length DESC LIMIT 20",
+      "row_count": 20,
+      "status": "success"
+    },
+    {
+      "id": 188,
+      "category": "Cross-Domain",
+      "question": "What is the median price comparison between products and books?",
+      "query": "SELECT 'Products' as type, MEDIAN(unit_prc) as median_price FROM SUPPLY_CHAIN.INV_MAST WHERE unit_prc > 0 UNION ALL SELECT 'Books', MEDIAN(unit_prc) FROM SUPPLY_CHAIN.BK_CATALOG WHERE unit_prc > 0",
+      "row_count": 2,
+      "status": "success"
+    },
+    {
+      "id": 189,
+      "category": "Cross-Domain",
+      "question": "What items were added most recently across all sources?",
+      "query": "SELECT 'Product' as type, inv_id as id, inv_nm as name, scrp_dt FROM SUPPLY_CHAIN.INV_MAST UNION ALL SELECT 'Book', bk_id, bk_ttl, scrp_dt FROM SUPPLY_CHAIN.BK_CATALOG UNION ALL SELECT 'Film', media_id, media_ttl, scrp_dt FROM SUPPLY_CHAIN.MEDIA_MAST ORDER BY scrp_dt DESC LIMIT 30",
+      "row_count": 30,
+      "status": "success"
+    },
+    {
+      "id": 190,
+      "category": "Cross-Domain",
+      "question": "What is the standard deviation comparison of prices between products and books?",
+      "query": "SELECT 'Products' as type, STDDEV(unit_prc) as price_stddev FROM SUPPLY_CHAIN.INV_MAST WHERE unit_prc > 0 UNION ALL SELECT 'Books', STDDEV(unit_prc) FROM SUPPLY_CHAIN.BK_CATALOG WHERE unit_prc > 0",
+      "row_count": 2,
+      "status": "success"
+    },
+    {
+      "id": 191,
+      "category": "Cross-Domain",
+      "question": "What is the price range comparison between products and books?",
+      "query": "SELECT 'Products' as type, MIN(unit_prc) as min_price, MAX(unit_prc) as max_price, MAX(unit_prc) - MIN(unit_prc) as price_range FROM SUPPLY_CHAIN.INV_MAST WHERE unit_prc > 0 UNION ALL SELECT 'Books', MIN(unit_prc), MAX(unit_prc), MAX(unit_prc) - MIN(unit_prc) FROM SUPPLY_CHAIN.BK_CATALOG WHERE unit_prc > 0",
+      "row_count": 2,
+      "status": "success"
+    },
+    {
+      "id": 192,
+      "category": "Cross-Domain",
+      "question": "What items have duplicate names across different types?",
+      "query": "SELECT inv_nm as name, 'Product' as type, COUNT(*) as count FROM SUPPLY_CHAIN.INV_MAST GROUP BY inv_nm HAVING COUNT(*) > 1 UNION ALL SELECT bk_ttl, 'Book', COUNT(*) FROM SUPPLY_CHAIN.BK_CATALOG GROUP BY bk_ttl HAVING COUNT(*) > 1 UNION ALL SELECT media_ttl, 'Film', COUNT(*) FROM SUPPLY_CHAIN.MEDIA_MAST GROUP BY media_ttl HAVING COUNT(*) > 1 ORDER BY count DESC",
+      "row_count": 25,
+      "status": "success"
+    },
+    {
+      "id": 193,
+      "category": "Cross-Domain",
+      "question": "What is the total count of items added each month?",
+      "query": "SELECT TRUNC(scrp_dt, 'MONTH') as month, 'Products' as type, COUNT(*) as count FROM SUPPLY_CHAIN.INV_MAST GROUP BY TRUNC(scrp_dt, 'MONTH') UNION ALL SELECT TRUNC(scrp_dt, 'MONTH'), 'Books', COUNT(*) FROM SUPPLY_CHAIN.BK_CATALOG GROUP BY TRUNC(scrp_dt, 'MONTH') UNION ALL SELECT TRUNC(scrp_dt, 'MONTH'), 'Films', COUNT(*) FROM SUPPLY_CHAIN.MEDIA_MAST GROUP BY TRUNC(scrp_dt, 'MONTH') ORDER BY month DESC, type",
+      "row_count": 3,
+      "status": "success"
+    },
+    {
+      "id": 194,
+      "category": "Cross-Domain",
+      "question": "What is the coefficient of variation comparison between products and books?",
+      "query": "SELECT 'Products' as type, STDDEV(unit_prc) / AVG(unit_prc) as coefficient_of_variation FROM SUPPLY_CHAIN.INV_MAST WHERE unit_prc > 0 UNION ALL SELECT 'Books', STDDEV(unit_prc) / AVG(unit_prc) FROM SUPPLY_CHAIN.BK_CATALOG WHERE unit_prc > 0",
+      "row_count": 2,
+      "status": "success"
+    },
+    {
+      "id": 196,
+      "category": "Cross-Domain",
+      "question": "What is the interquartile range comparison between products and books?",
+      "query": "SELECT 'Products' as type, PERCENTILE_CONT(0.75) WITHIN GROUP (ORDER BY unit_prc) - PERCENTILE_CONT(0.25) WITHIN GROUP (ORDER BY unit_prc) as iqr FROM SUPPLY_CHAIN.INV_MAST WHERE unit_prc > 0 UNION ALL SELECT 'Books', PERCENTILE_CONT(0.75) WITHIN GROUP (ORDER BY unit_prc) - PERCENTILE_CONT(0.25) WITHIN GROUP (ORDER BY unit_prc) FROM SUPPLY_CHAIN.BK_CATALOG WHERE unit_prc > 0",
+      "row_count": 2,
+      "status": "success"
+    },
+    {
+      "id": 197,
+      "category": "Cross-Domain",
+      "question": "What is the variance comparison of prices between products and books?",
+      "query": "SELECT 'Products' as type, VARIANCE(unit_prc) as price_variance FROM SUPPLY_CHAIN.INV_MAST WHERE unit_prc > 0 UNION ALL SELECT 'Books', VARIANCE(unit_prc) FROM SUPPLY_CHAIN.BK_CATALOG WHERE unit_prc > 0",
+      "row_count": 2,
+      "status": "success"
+    },
+    {
+      "id": 198,
+      "category": "Cross-Domain",
+      "question": "What items have the shortest names across all types?",
+      "query": "SELECT 'Product' as type, inv_id as id, inv_nm as name, LENGTH(inv_nm) as name_length FROM SUPPLY_CHAIN.INV_MAST UNION ALL SELECT 'Book', bk_id, bk_ttl, LENGTH(bk_ttl) FROM SUPPLY_CHAIN.BK_CATALOG UNION ALL SELECT 'Film', media_id, media_ttl, LENGTH(media_ttl) FROM SUPPLY_CHAIN.MEDIA_MAST ORDER BY name_length LIMIT 20",
+      "row_count": 20,
+      "status": "success"
+    },
+    {
+      "id": 199,
+      "category": "Cross-Domain",
+      "question": "What is the cumulative count of all items over time?",
+      "query": "SELECT DATE(scrp_dt) as date, COUNT(*) as daily_count, SUM(COUNT(*)) OVER (ORDER BY DATE(scrp_dt)) as cumulative_count, 'Products' as type FROM SUPPLY_CHAIN.INV_MAST GROUP BY DATE(scrp_dt) UNION ALL SELECT DATE(scrp_dt), COUNT(*), SUM(COUNT(*)) OVER (ORDER BY DATE(scrp_dt)), 'Books' FROM SUPPLY_CHAIN.BK_CATALOG GROUP BY DATE(scrp_dt) UNION ALL SELECT DATE(scrp_dt), COUNT(*), SUM(COUNT(*)) OVER (ORDER BY DATE(scrp_dt)), 'Films' FROM SUPPLY_CHAIN.MEDIA_MAST GROUP BY DATE(scrp_dt) ORDER BY date, type",
+      "row_count": 3,
+      "status": "success"
+    },
+    {
+      "id": 200,
+      "category": "Cross-Domain",
+      "question": "What is the overall statistics summary for all item types?",
+      "query": "SELECT 'Products' as type, COUNT(*) as total_count, AVG(unit_prc) as avg_price, MIN(unit_prc) as min_price, MAX(unit_prc) as max_price FROM SUPPLY_CHAIN.INV_MAST WHERE unit_prc > 0 UNION ALL SELECT 'Books', COUNT(*), AVG(unit_prc), MIN(unit_prc), MAX(unit_prc) FROM SUPPLY_CHAIN.BK_CATALOG WHERE unit_prc > 0 UNION ALL SELECT 'Films', COUNT(*), NULL, NULL, NULL FROM SUPPLY_CHAIN.MEDIA_MAST",
+      "row_count": 3,
+      "status": "success"
+    }
+  ]
+}
