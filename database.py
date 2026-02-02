@@ -495,6 +495,59 @@ class SnowflakeManager:
         
         return results
 
+    def delete_all_data(self):
+        """Delete all data from tables but keep the tables and views"""
+        try:
+            # Ensure we're using the correct database and schema
+            if self.database:
+                self.cursor.execute(f"USE DATABASE {self.database}")
+            self.cursor.execute(f"USE SCHEMA {self.schema}")
+            
+            # Delete from detail tables first (they may reference fact tables)
+            detail_tables = ["INV_VAR", "INV_REV", "INV_SIM"]
+            for table in detail_tables:
+                try:
+                    self.cursor.execute(f"DELETE FROM {self.schema}.{table}")
+                    count = self.cursor.rowcount
+                    logger.info(f"Deleted {count} rows from {table}")
+                except Exception as e:
+                    logger.warning(f"Could not delete from {table}: {e}")
+            
+            # Delete from bridge tables
+            bridge_tables = ["BK_CAT_XREF", "MEDIA_PERF_XREF", "MEDIA_AWD_XREF"]
+            for table in bridge_tables:
+                try:
+                    self.cursor.execute(f"DELETE FROM {self.schema}.{table}")
+                    count = self.cursor.rowcount
+                    logger.info(f"Deleted {count} rows from {table}")
+                except Exception as e:
+                    logger.warning(f"Could not delete from {table}: {e}")
+            
+            # Delete from fact tables
+            fact_tables = ["INV_MAST", "BK_CATALOG", "MEDIA_MAST"]
+            for table in fact_tables:
+                try:
+                    self.cursor.execute(f"DELETE FROM {self.schema}.{table}")
+                    count = self.cursor.rowcount
+                    logger.info(f"Deleted {count} rows from {table}")
+                except Exception as e:
+                    logger.warning(f"Could not delete from {table}: {e}")
+            
+            # Delete from dimension tables
+            dimension_tables = ["CAT_REF", "BK_CAT_REF", "AUTH_REF", "DIR_REF", "PERF_REF", "AWARD_REF"]
+            for table in dimension_tables:
+                try:
+                    self.cursor.execute(f"DELETE FROM {self.schema}.{table}")
+                    count = self.cursor.rowcount
+                    logger.info(f"Deleted {count} rows from {table}")
+                except Exception as e:
+                    logger.warning(f"Could not delete from {table}: {e}")
+            
+            logger.info("Successfully deleted all data from tables")
+        except Exception as e:
+            logger.error(f"Error deleting data: {str(e)}")
+            raise
+
     def create_task(self, task_name: str, query: str, schedule: str = "USING CRON 0 * * * * UTC"):
         """Create a single Snowflake task with the specified query and schedule"""
         try:

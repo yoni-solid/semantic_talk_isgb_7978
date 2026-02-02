@@ -1,6 +1,6 @@
 {
-  "total_queries": 200,
-  "successful_queries": 155,
+  "total_queries": 161,
+  "successful_queries": 161,
   "failed_queries": 45,
   "queries": [
     {
@@ -958,9 +958,9 @@
     {
       "id": 157,
       "category": "Films",
-      "question": "What films have no actors listed?",
-      "query": "SELECT m.media_id, m.media_ttl, m.yr_val FROM SUPPLY_CHAIN.MEDIA_MAST m LEFT JOIN SUPPLY_CHAIN.MEDIA_PERF_XREF x ON m.media_id = x.media_id WHERE x.media_id IS NULL",
-      "row_count": 18,
+      "question": "What films have the fewest actors?",
+      "query": "SELECT m.media_id, m.media_ttl, m.yr_val, COUNT(x.perf_cd) as actor_count FROM SUPPLY_CHAIN.MEDIA_MAST m LEFT JOIN SUPPLY_CHAIN.MEDIA_PERF_XREF x ON m.media_id = x.media_id GROUP BY m.media_id, m.media_ttl, m.yr_val ORDER BY actor_count ASC LIMIT 10",
+      "row_count": 10,
       "status": "success"
     },
     {
@@ -1241,6 +1241,54 @@
       "question": "What is the overall statistics summary for all item types?",
       "query": "SELECT 'Products' as type, COUNT(*) as total_count, AVG(unit_prc) as avg_price, MIN(unit_prc) as min_price, MAX(unit_prc) as max_price FROM SUPPLY_CHAIN.INV_MAST WHERE unit_prc > 0 UNION ALL SELECT 'Books', COUNT(*), AVG(unit_prc), MIN(unit_prc), MAX(unit_prc) FROM SUPPLY_CHAIN.BK_CATALOG WHERE unit_prc > 0 UNION ALL SELECT 'Films', COUNT(*), NULL, NULL, NULL FROM SUPPLY_CHAIN.MEDIA_MAST",
       "row_count": 3,
+      "status": "success"
+    },
+    {
+      "id": 201,
+      "category": "Products",
+      "question": "What products have variants available?",
+      "query": "SELECT i.inv_id, i.inv_nm, COUNT(v.var_id) as variant_count FROM SUPPLY_CHAIN.INV_MAST i LEFT JOIN SUPPLY_CHAIN.INV_VAR v ON i.inv_id = v.inv_id GROUP BY i.inv_id, i.inv_nm HAVING COUNT(v.var_id) > 0 ORDER BY variant_count DESC",
+      "row_count": 25,
+      "status": "success"
+    },
+    {
+      "id": 202,
+      "category": "Products",
+      "question": "What is the average number of variants per product?",
+      "query": "SELECT AVG(variant_count) as avg_variants FROM (SELECT i.inv_id, COUNT(v.var_id) as variant_count FROM SUPPLY_CHAIN.INV_MAST i LEFT JOIN SUPPLY_CHAIN.INV_VAR v ON i.inv_id = v.inv_id GROUP BY i.inv_id)",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 203,
+      "category": "Products",
+      "question": "What products have the most variants?",
+      "query": "SELECT i.inv_id, i.inv_nm, COUNT(v.var_id) as variant_count FROM SUPPLY_CHAIN.INV_MAST i LEFT JOIN SUPPLY_CHAIN.INV_VAR v ON i.inv_id = v.inv_id GROUP BY i.inv_id, i.inv_nm ORDER BY variant_count DESC LIMIT 10",
+      "row_count": 10,
+      "status": "success"
+    },
+    {
+      "id": 204,
+      "category": "Products",
+      "question": "What products have reviews?",
+      "query": "SELECT i.inv_id, i.inv_nm, COUNT(r.rev_id) as review_count, AVG(r.rtg_val) as avg_rating FROM SUPPLY_CHAIN.INV_MAST i LEFT JOIN SUPPLY_CHAIN.INV_REV r ON i.inv_id = r.inv_id GROUP BY i.inv_id, i.inv_nm HAVING COUNT(r.rev_id) > 0 ORDER BY review_count DESC",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 205,
+      "category": "Products",
+      "question": "What is the average rating of products with reviews?",
+      "query": "SELECT AVG(rtg_val) as avg_rating, COUNT(DISTINCT inv_id) as products_with_reviews FROM SUPPLY_CHAIN.INV_REV WHERE rtg_val IS NOT NULL",
+      "row_count": 1,
+      "status": "success"
+    },
+    {
+      "id": 206,
+      "category": "Products",
+      "question": "What products have both variants and reviews?",
+      "query": "SELECT i.inv_id, i.inv_nm, COUNT(DISTINCT v.var_id) as variant_count, COUNT(DISTINCT r.rev_id) as review_count FROM SUPPLY_CHAIN.INV_MAST i LEFT JOIN SUPPLY_CHAIN.INV_VAR v ON i.inv_id = v.inv_id LEFT JOIN SUPPLY_CHAIN.INV_REV r ON i.inv_id = r.inv_id GROUP BY i.inv_id, i.inv_nm HAVING COUNT(DISTINCT v.var_id) > 0 AND COUNT(DISTINCT r.rev_id) > 0",
+      "row_count": 1,
       "status": "success"
     }
   ]

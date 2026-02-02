@@ -80,6 +80,11 @@ async def main():
         db_manager.create_schema()
         db_manager.create_all_tables()
         
+        # Step 5.5: Delete existing data (but keep tables/views)
+        logger.info("\n[STEP 5.5] DELETING EXISTING DATA")
+        logger.info("-" * 60)
+        db_manager.delete_all_data()
+        
         # Step 6: Load data
         logger.info("\n[STEP 6] LOADING DATA INTO SNOWFLAKE")
         logger.info("-" * 60)
