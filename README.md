@@ -58,7 +58,9 @@ semantic_talk_isgb_7978/
    SNOWFLAKE_WAREHOUSE=your_warehouse
    SNOWFLAKE_ROLE=your_role
    SNOWFLAKE_DATABASE=your_database
+   LLM_PROVIDER=openai
    OPENAI_API_KEY=your_openai_api_key
+   GEMINI_API_KEY=your_gemini_api_key
    ```
 
 4. Configure Snowflake credentials in `.env`:
@@ -71,10 +73,18 @@ semantic_talk_isgb_7978/
    SNOWFLAKE_DATABASE=your_database
    ```
 
-5. Configure OpenAI API key (optional but recommended for LLM extraction):
+5. Configure LLM for extraction (optional but recommended): use **either** OpenAI or Gemini. Set `LLM_PROVIDER` to `openai` or `gemini` to force one; if unset, the pipeline uses whichever API key is set (OpenAI preferred if both are set).
    ```
+   LLM_PROVIDER=openai
    OPENAI_API_KEY=your_openai_api_key
    ```
+   Or for Gemini:
+   ```
+   LLM_PROVIDER=gemini
+   GEMINI_API_KEY=your_gemini_api_key
+   ```
+
+6. **First run (browser)**: The pipeline uses Crawl4AI with Playwright. On first run, if Chromium is not installed, it will run `playwright install chromium` automatically (one-time, may take a few minutes). You can also run it manually beforehand: `python -m playwright install chromium`.
 
 ## Usage
 
@@ -182,7 +192,7 @@ pytest tests/ -v
 - **No FK Constraints**: The schema uses code references (cat_cd, auth_cd, etc.) but does not enforce foreign key constraints, mimicking real-world messy environments
 - **Non-Obvious Naming**: Table and column names use abbreviations (INV_MAST, cat_cd, unit_prc) that require understanding to interpret
 - **Hybrid Scraping**: Uses CSS selectors for initial extraction, falling back to LLM extraction when needed. This reduces token usage while extracting more data
-- **LLM Extraction**: Requires OpenAI API key for optimal extraction. Will warn if not provided but may fail on complex pages
+- **LLM Extraction**: Supports OpenAI or Google Gemini (set `LLM_PROVIDER` and the corresponding API key). Will warn if no key is provided but may fail on complex pages
 - **Pagination**: Scrapers handle pagination automatically with configurable limits
 - **Query Generation**: Generated queries are tested against actual data to ensure they return results
 - **Task Scheduling**: All tasks run hourly indefinitely. Tasks can be suspended/resumed individually using the database manager methods

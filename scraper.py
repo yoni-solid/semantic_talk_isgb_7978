@@ -4,14 +4,25 @@ Scrapes products, books, and films with normalization of dimension data.
 """
 import asyncio
 import logging
+import subprocess
+import sys
 import uuid
 import json
 import os
 import re
+from pathlib import Path
 from typing import List, Dict, Tuple, Optional
 from datetime import datetime
 import pandas as pd
 from bs4 import BeautifulSoup
+
+# Use project directory for Crawl4AI DB/cache and Playwright browsers (writable, avoids EPERM / "unable to open database file")
+_project_root = Path(__file__).resolve().parent
+if not os.getenv("CRAWL4_AI_BASE_DIRECTORY"):
+    os.environ["CRAWL4_AI_BASE_DIRECTORY"] = str(_project_root)
+if not os.getenv("PLAYWRIGHT_BROWSERS_PATH"):
+    os.environ["PLAYWRIGHT_BROWSERS_PATH"] = str(_project_root / ".playwright-browsers")
+
 from crawl4ai import AsyncWebCrawler, BrowserConfig, CrawlerRunConfig, LLMConfig
 from crawl4ai.extraction_strategy import LLMExtractionStrategy
 
@@ -22,6 +33,25 @@ from models import (
 )
 
 logger = logging.getLogger(__name__)
+
+
+def _ensure_playwright_chromium() -> None:
+    """Ensure Playwright Chromium browser is installed; install if missing (fixes 'Executable doesn't exist')."""
+    try:
+        from playwright.sync_api import sync_playwright
+        with sync_playwright() as p:
+            path = p.chromium.executable_path
+        if path and os.path.exists(path):
+            return
+    except Exception:
+        pass
+    logger.info("Playwright Chromium not found. Installing (one-time)...")
+    subprocess.run(
+        [sys.executable, "-m", "playwright", "install", "chromium"],
+        check=True,
+        capture_output=False,
+    )
+    logger.info("Playwright Chromium install completed.")
 
 
 class WebScraper:
@@ -53,20 +83,49 @@ class WebScraper:
         self.film_actor_bridges: List[FilmActorBridge] = []
         self.film_award_bridges: List[FilmAwardBridge] = []
         
-        # OpenAI API key
-        self.openai_api_key = os.getenv("OPENAI_API_KEY")
-        if not self.openai_api_key:
-            logger.warning("OPENAI_API_KEY not found in environment. LLM extraction may fail.")
+        # LLM: OpenAI or Gemini (from env)
+        self._init_llm_config()
+
+    def _init_llm_config(self):
+        """Resolve LLM provider and API key from environment."""
+        llm_provider = (os.getenv("LLM_PROVIDER") or "").strip().lower()
+        openai_key = (os.getenv("OPENAI_API_KEY") or "").strip()
+        gemini_key = (os.getenv("GEMINI_API_KEY") or "").strip()
+
+        if llm_provider in ("openai", "gemini"):
+            if llm_provider == "openai":
+                self.llm_provider = "openai"
+                self.llm_api_key = openai_key if openai_key else None
+                if not self.llm_api_key:
+                    logger.warning("LLM_PROVIDER=openai but OPENAI_API_KEY not set. LLM extraction may fail.")
+            else:
+                self.llm_provider = "gemini"
+                self.llm_api_key = gemini_key if gemini_key else None
+                if not self.llm_api_key:
+                    logger.warning("LLM_PROVIDER=gemini but GEMINI_API_KEY not set. LLM extraction may fail.")
+        else:
+            # Infer from which key is set; prefer OpenAI if both set (backward compatible)
+            if openai_key:
+                self.llm_provider = "openai"
+                self.llm_api_key = openai_key
+            elif gemini_key:
+                self.llm_provider = "gemini"
+                self.llm_api_key = gemini_key
+            else:
+                self.llm_provider = "openai"
+                self.llm_api_key = None
+                logger.warning("No OPENAI_API_KEY or GEMINI_API_KEY found. LLM extraction may fail.")
 
     def _get_extraction_strategy(self, schema: dict, extraction_type: str = "schema"):
-        """Create LLM extraction strategy"""
-        if not self.openai_api_key:
-            logger.warning("Cannot create LLMExtractionStrategy without OPENAI_API_KEY")
+        """Create LLM extraction strategy (OpenAI or Gemini)."""
+        if not self.llm_api_key:
+            logger.warning("Cannot create LLMExtractionStrategy without an API key for the chosen LLM provider.")
             return None
-        
+
+        # Crawl4AI/LiteLLM: provider can be "openai" or "gemini" (or "gemini/model" if needed)
         llm_config = LLMConfig(
-            provider="openai",
-            api_token=self.openai_api_key
+            provider=self.llm_provider,
+            api_token=self.llm_api_key
         )
         
         return LLMExtractionStrategy(
@@ -268,7 +327,7 @@ class WebScraper:
     async def _extract_items_with_llm(self, crawler: AsyncWebCrawler, html_sections: List[str], 
                                      item_schema: dict, item_type: str) -> List[dict]:
         """Extract structured data from HTML sections using LLM - hybrid approach"""
-        if not self.openai_api_key:
+        if not self.llm_api_key:
             return []
         
         extraction_strategy = self._get_extraction_strategy(item_schema)
@@ -872,7 +931,7 @@ class WebScraper:
                                                     author_name = author_elem.get_text(strip=True)
                                             
                                             # Method 3: Use LLM to extract author from description or page content
-                                            if not author_name and self.openai_api_key:
+                                            if not author_name and self.llm_api_key:
                                                 # Get description text
                                                 desc_elem = detail_soup.select_one('#product_description + p, .product_description, [itemprop="description"]')
                                                 desc_text = desc_elem.get_text(strip=True) if desc_elem else ""
@@ -1721,6 +1780,7 @@ class WebScraper:
 
     async def run_all(self) -> None:
         """Run all scrapers concurrently"""
+        _ensure_playwright_chromium()
         logger.info("Starting all scraping tasks concurrently")
         await asyncio.gather(
             self.scrape_products(),

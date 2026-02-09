@@ -51,3 +51,6 @@ logs/
 # OS
 .DS_Store
 Thumbs.db
+
+.crawl4ai/
+.playwright-browsers/
